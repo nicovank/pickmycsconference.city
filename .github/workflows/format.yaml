@@ -20,4 +20,4 @@ jobs:
         run: npm install --global prettier
 
       - name: Check Format
-        run: prettier --check "**/*.{css,html,js,json,yaml}"
+        run: prettier --check "**/*.{css,html,js,json,md,yaml}"
