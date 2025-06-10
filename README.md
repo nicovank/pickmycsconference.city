@@ -17,7 +17,7 @@ prettier --write "**/*.{css,html,js,json,md,yaml}"
 ```
 
 There's a [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
-If you use it, add this to your preferences:
+If you use it with auto-formatting on, add this to your preferences:
 
 ```json
 {
