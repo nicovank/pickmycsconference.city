@@ -19,7 +19,7 @@ prettier --write "**/*.{css,html,js,json,md,yaml}"
 For Python, run Black:
 
 ```bash
-python3 -m black --check src/python
+python3 -m black src/python
 ```
 
 There's a [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
