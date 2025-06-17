@@ -9,25 +9,25 @@ Let's try to implement some common industry coding practices.
 ### Code formatting
 
 All code should be run through the formatter. I've set up CI to auto-complain if something is not right.
-To format code locally, install and run [Prettier](https://prettier.io).
-
-```bash
-npm install --global prettier
-prettier --write "**/*.{css,html,js,json,md,yaml}"
-```
-
-For Python, run Black:
+To format Python code, run Black:
 
 ```bash
 python3 -m black src/python
 ```
 
-You might also want to run the typechecker locally. If this rings any issues you're not sure how to handle,
-just leave them and we'll look at it together!
+You might also want to run the typechecker. If this rings any issues you're not sure how to handle,
+we'll look at it together!
 
 ```bash
 python3 -m pip install mypy
 python3 -m mypy src/python
+```
+
+For HTML/CSS/JS/other code, install and run [Prettier](https://prettier.io).
+
+```bash
+npm install --global prettier
+prettier --write "**/*.{css,html,js,json,md,yaml}"
 ```
 
 There's a [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
