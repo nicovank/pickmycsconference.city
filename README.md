@@ -16,6 +16,12 @@ npm install --global prettier
 prettier --write "**/*.{css,html,js,json,md,yaml}"
 ```
 
+For Python, run Black:
+
+```bash
+python3 -m black --check src/python
+```
+
 There's a [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
 If you use it with auto-formatting on, add this to your preferences:
 
