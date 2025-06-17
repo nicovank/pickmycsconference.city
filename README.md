@@ -22,6 +22,14 @@ For Python, run Black:
 python3 -m black src/python
 ```
 
+You might also want to run the typechecker locally. If this rings any issues you're not sure how to handle,
+just leave them and we'll look at it together!
+
+```bash
+python3 -m pip install mypy
+python3 -m mypy src/python
+```
+
 There's a [Prettier VS Code extension](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode).
 If you use it with auto-formatting on, add this to your preferences:
 
