@@ -21,7 +21,7 @@ jobs:
           npm install --global prettier
           pip install --user black
 
-      - name: Check Format
+      - name: Check format
         run: |
           prettier --check "**/*.{css,html,js,json,md,yaml}"
           python3 -m black --check src/python
