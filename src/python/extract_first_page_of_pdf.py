@@ -1,5 +1,5 @@
 import sys
-from PyPDF2 import PdfReader, PdfWriter  # type: ignore
+from PyPDF2 import PdfReader, PdfWriter #type: ignore
 
 
 def extract_first_page_of_pdf(pdf: str, desired_path: str) -> None:

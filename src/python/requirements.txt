@@ -1,2 +1,5 @@
 # For extracting first page of PDF
 PyPDF2
+
+#For getting affiliation
+openai
