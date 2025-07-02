@@ -3,7 +3,6 @@ import os
 from openai import OpenAI  # type: ignore
 import sys
 import tempfile
-from typing import IO
 
 
 client = OpenAI()
