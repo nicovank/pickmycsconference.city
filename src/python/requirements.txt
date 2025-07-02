@@ -1,5 +1,2 @@
-# For extracting first page of PDF
-PyPDF2
-
-#For getting affiliation
-openai
+pypdf>=5.7.0
+openai>=1.93.0
