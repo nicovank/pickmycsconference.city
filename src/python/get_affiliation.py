@@ -22,7 +22,7 @@ def get_affiliations(pdf: str) -> str:
         str: The affiliation extracted from the PDF.
     """
 
-    file = client.files.create(file=open(f"{pdf.name}", "rb"), purpose="user_data")
+    file = client.files.create(file=open(pdf, "rb"), purpose="user_data")
 
     response = client.chat.completions.create(
         model="gpt-4.1",
