@@ -11,7 +11,7 @@ client = OpenAI()
 api_key = os.getenv("OPENAI_API_KEY")
 
 
-def get_affiliation(pdf: IO[bytes]) -> str:
+def get_affiliations(pdf: str) -> str:
     """
     Sends the extracted text from the first page of a PDF file to the OpenAI API to get the affiliation.
 
