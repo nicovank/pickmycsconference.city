@@ -1,6 +1,6 @@
 import extract_first_page_of_pdf
 import os
-from openai import OpenAI  # type: ignore
+from openai import OpenAI
 import sys
 import tempfile
 
