@@ -58,6 +58,5 @@ if __name__ == "__main__":
     with tempfile.NamedTemporaryFile(suffix=".pdf") as tmp:
         temp_pdf_path = tmp.name
         extract_first_page_of_pdf.extract_first_page_of_pdf(pdf_path, temp_pdf_path)
-        tmp.flush()
         affiliation = get_affiliations(tmp.name)
         print(f"Affiliation extracted from {pdf_path}:\n{affiliation}")
