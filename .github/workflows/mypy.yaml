@@ -18,5 +18,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r src/python/requirements.txt
 
+      - name: Install dependencies
+        run: pip install -r src/python/requirements.txt
+
       - name: mypy check
         run: mypy --strict src/python
