@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Cluster Map</title>
+    <meta charset="UTF-8" />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- Leaflet MarkerCluster CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+    />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet MarkerCluster JS -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <style>
+      #map {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80%;
+        height: 80%;
+        transform: translate(-50%, -50%);
+      } /* This will be moved to a css file and changed */
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script>
+      // Initialize the map
+      var map = L.map("map").setView([0, 0], 2); // Initialize map with a default view
+
+      L.tileLayer(
+        "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=BqtwcjnWGsiCTa30jj5M",
+        {
+          //I used the 'Streets' Map from MapTiler. Other formats can be found at https://cloud.maptiler.com/maps/
+          attribution:
+            '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+        },
+      ).addTo(map);
+
+      var geojson = {
+        //Currently hardcoded, once we have the backend working, this will be replaced with a call to the backend to get the geojson data
+        type: "FeatureCollection",
+        features: [
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              coordinates: [-73.76459065761857, 42.65420521050979],
+              type: "Point",
+            },
+          },
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              coordinates: [-73.76459065761857, 42.65420521050979],
+              type: "Point",
+            },
+          },
+          {
+            type: "Feature",
+            properties: {},
+            geometry: {
+              coordinates: [-73.76459065761857, 42.65420521050979],
+              type: "Point",
+            },
+          },
+        ],
+      };
+      var markers = L.markerClusterGroup(); // Create a marker cluster group
+
+      L.geoJSON(geojson, {
+        pointToLayer: function (feature, latlng) {
+          let marker = L.marker(latlng);
+          if (feature.properties && feature.properties.name) {
+            marker.bindPopup(feature.properties.name);
+          }
+          return marker;
+        },
+      }).eachLayer((layer) => markers.addLayer(layer));
+      map.addLayer(markers);
+    </script>
+  </body>
+</html>
