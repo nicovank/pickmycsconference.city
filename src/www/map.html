@@ -41,7 +41,7 @@
     <div id="map"></div>
     <script>
       // Initialize the map
-      var map = L.map("map").setView([0, 0], 2); // Initialize map with a default view
+      const map = L.map("map").setView([0, 0], 2); // Initialize map with a default view
 
       L.tileLayer(
         "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=BqtwcjnWGsiCTa30jj5M",
@@ -52,7 +52,7 @@
         },
       ).addTo(map);
 
-      var geojson = {
+      const geojson = {
         //Currently hardcoded, once we have the backend working, this will be replaced with a call to the backend to get the geojson data
         type: "FeatureCollection",
         features: [
@@ -82,7 +82,7 @@
           },
         ],
       };
-      var markers = L.markerClusterGroup(); // Create a marker cluster group
+      const markers = L.markerClusterGroup(); // Create a marker cluster group
 
       L.geoJSON(geojson, {
         pointToLayer: function (feature, latlng) {
