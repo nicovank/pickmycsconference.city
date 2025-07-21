@@ -86,7 +86,7 @@
 
       L.geoJSON(geojson, {
         pointToLayer: function (feature, latlng) {
-          let marker = L.marker(latlng);
+          const marker = L.marker(latlng);
           if (feature.properties && feature.properties.name) {
             marker.bindPopup(feature.properties.name);
           }
