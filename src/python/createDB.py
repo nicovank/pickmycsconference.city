@@ -1,6 +1,8 @@
 import psycopg2
 from psycopg2.extensions import cursor
 
+from database_connection import open_connection
+
 # --- SQL STATEMENTS FOR TABLE CREATION ---
 # Tables are defined in an order that respects dependencies.
 # Ex: 'affiliations' and 'conferences' are created before tables that reference them.
@@ -24,20 +26,20 @@ TABLES_SQL: list[str] = [
     """,
     """
     CREATE TABLE papers (
-	    doi VARCHAR(255) PRIMARY KEY,
-		title TEXT,
-		conference_short_name VARCHAR(50),
-		conference_year INTEGER,
-		manually_edited BOOLEAN DEFAULT FALSE NOT NULL,
-		FOREGIN KEY(conference_short_name, conference_year) REFERENCES conference_happenings(conference_short_name, year)
-	);
+        doi VARCHAR(255) PRIMARY KEY,
+        title TEXT,
+        conference_short_name VARCHAR(50),
+        conference_year INTEGER,
+        manually_edited BOOLEAN DEFAULT FALSE NOT NULL,
+        FOREIGN KEY(conference_short_name, conference_year) REFERENCES conference_happenings(conference_short_name, year)
+    );
     """,
     """
     CREATE TABLE affiliations (
         affiliation_name VARCHAR(255) PRIMARY KEY,
-	    latitude DOUBLE PRECISION,
-	    longitude DOUBLE PRECISION,
-	    manually_edited BOOLEAN DEFAULT FALSE NOT NULL
+        latitude DOUBLE PRECISION,
+        longitude DOUBLE PRECISION,
+        manually_edited BOOLEAN DEFAULT FALSE NOT NULL
     );
     """,
     """
@@ -63,22 +65,9 @@ def create_tables(conn: cursor) -> None:
 
 
 def main() -> None:
-    # Can make these into args or env if needed
-    db_name = "urv"
-    db_user = "urv"
-    db_password = "urv-summer-2025"
-    db_host = "157.230.67.84"
-    db_port = "5432"
-
     conn = None
     try:
-        conn = psycopg2.connect(
-            database=db_name,
-            user=db_user,
-            password=db_password,
-            host=db_host,
-            port=db_port,
-        )
+        conn = open_connection()
         cur = conn.cursor()
         create_tables(cur)
         print("Creating tables")
