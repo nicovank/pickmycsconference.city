@@ -8,6 +8,13 @@ geolocator = GoogleV3(api_key)
 
 
 def get_coords_from_affiliation(affiliation: str) -> tuple[float, float]:
+    """Get coordinates from an affiliation string using geocoding.
+
+    Args:
+        affiliation: The affiliation string to geocode.
+    Returns:
+        A tuple containing latitude and longitude."""
+
     location = geolocator.geocode(affiliation)
     if location:
         return location.latitude, location.longitude
