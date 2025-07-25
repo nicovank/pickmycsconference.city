@@ -66,8 +66,20 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
         soup: BeautifulSoup = BeautifulSoup(response.content, "xml")
 
         ee_tag = soup.find("ee")
-        if ee_tag and "doi.org" in ee_tag.text:
-            return ee_tag.text
+        if not ee_tag:
+            return None
+
+        title = soup.find("title")
+        conference_short_name = soup.find("booktitle")
+        year = soup.find("year")
+
+        if title and conference_short_name and year:
+            return {
+                "doi": ee_tag.text,
+                "title": title.text,
+                "conference": conference_short_name.text,
+                "year": int(year.text),
+            }
 
         title = soup.find("title")
         conference_short_name = soup.find("booktitle")
