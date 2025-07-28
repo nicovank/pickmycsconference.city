@@ -12,9 +12,8 @@ TABLES_SQL: list[str] = [
     CREATE TABLE conference_happenings (
         conference_short_name VARCHAR(50) NOT NULL,
         year INTEGER NOT NULL,
-        location VARCHAR(100),
-        start_date DATE,
-        end_date DATE,
+        latitude DOUBLE PRECISION,
+        longitude DOUBLE PRECISION,
         PRIMARY KEY (conference_short_name, year)
     );
     """,
