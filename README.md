@@ -2,6 +2,24 @@
 
 We'll find a good name for this later.
 
+## Adding conference data
+
+Use the following workflow to add a new conference (example for FSE 2024):
+```bash
+# 1. Gather all papers DOI and metadata:
+python3 src/python/dblpscrape.py [TODO]
+
+# 2. Download all PDFs (requires Windows).
+# For ACM conferences:
+python3 src/gather_acm_pdfs.py \
+  --conference-short-name FSE \
+  --conference-year 2024 \
+  --output-directory .pdfs
+
+# 3. Populate affiliations in database
+[TODO]
+```
+
 ## Development
 
 Let's try to implement some common industry coding practices.
