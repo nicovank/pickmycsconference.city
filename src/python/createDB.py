@@ -9,18 +9,11 @@ from database_connection import open_connection
 
 TABLES_SQL: list[str] = [
     """
-    CREATE TABLE conferences (
-        short_name VARCHAR(50) PRIMARY KEY,
-        long_name VARCHAR(255)
-    );
-    """,
-    """
     CREATE TABLE conference_happenings (
-        conference_short_name VARCHAR(50) NOT NULL REFERENCES conferences(short_name),
+        conference_short_name VARCHAR(50) NOT NULL,
         year INTEGER NOT NULL,
-        location VARCHAR(100),
-        start_date DATE,
-        end_date DATE,
+        latitude DOUBLE PRECISION,
+        longitude DOUBLE PRECISION,
         PRIMARY KEY (conference_short_name, year)
     );
     """,
@@ -30,6 +23,7 @@ TABLES_SQL: list[str] = [
         title TEXT,
         conference_short_name VARCHAR(50),
         conference_year INTEGER,
+        dblp_xml_url VARCHAR(255),
         manually_edited BOOLEAN DEFAULT FALSE NOT NULL,
         FOREIGN KEY(conference_short_name, conference_year) REFERENCES conference_happenings(conference_short_name, year)
     );
