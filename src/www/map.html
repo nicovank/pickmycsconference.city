@@ -3,6 +3,7 @@
   <head>
     <title>Cluster Map</title>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Leaflet CSS -->
     <link
@@ -25,75 +26,204 @@
 
     <!-- Leaflet MarkerCluster JS -->
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <!-- Bootstrap CSS-->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap JS-->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+
     <style>
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 70px;
+      }
+
       #map {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 80%;
-        height: 80%;
-        transform: translate(-50%, -50%);
-      } /* This will be moved to a css file and changed */
+        width: 100%;
+        height: 400px;
+      }
     </style>
   </head>
 
-  <body>
-    <div id="map"></div>
+  <body class="bg-light">
+    <!-- Mobile Navbar (only shown on small screens) -->
+    <nav class="navbar navbar-light bg-light d-md-none border-bottom fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Conference Mapper</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileSidebar"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Offcanvas Sidebar (mobile only) -->
+    <div
+      class="offcanvas offcanvas-start d-md-none"
+      tabindex="-1"
+      id="mobileSidebar"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Navigation</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item">
+            <a class="nav-link" href="#map-section">Maps</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#findings">Findings</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#poster">Poster</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Fixed Sidebar (desktop only) -->
+        <div
+          class="col-md-3 col-lg-2 d-none d-md-block bg-light border-end min-vh-100 position-fixed"
+        >
+          <div class="p-3">
+            <h4 class="text-center">Conference Mapper</h4>
+            <ul class="nav flex-column mt-4">
+              <li class="nav-item">
+                <a class="nav-link text-black" href="#about">About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-black" href="#map-section">Maps</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-black" href="#findings">Findings</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-black" href="#poster">Poster</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-black" href="#contact">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <main
+          class="col-md-9 ms-sm-auto col-lg-10 offset-md-3 px-3 px-md-5 pt-3 mt-2"
+        >
+          <section id="about" class="pt-4">
+            <h2>About</h2>
+            <p>
+              This section provides an overview of the project and its goals.
+            </p>
+          </section>
+
+          <section id="map-section" class="pt-5">
+            <h2>Maps</h2>
+            <p>This map shows the locations of various conference events.</p>
+            <div id="map" class="rounded shadow-sm border"></div>
+          </section>
+
+          <section id="findings" class="pt-5">
+            <h2>Findings</h2>
+            <p>Here we will summarize the findings from the conference.</p>
+          </section>
+
+          <section id="poster" class="pt-5">
+            <h2>Poster</h2>
+            <p>Here we will display the poster for the conference.</p>
+          </section>
+
+          <section id="contact" class="pt-5 mb-5">
+            <h2>Contact</h2>
+            <p>Email us at <a href="mailto:TODO">TODO</a></p>
+          </section>
+        </main>
+      </div>
+    </div>
+
     <script>
-      // Initialize the map
-      const map = L.map("map").setView([0, 0], 2); // Initialize map with a default view
+      document.addEventListener("DOMContentLoaded", function () {
+        const map = L.map("map").setView([0, 0], 2); // Initialize map with a default view
 
-      L.tileLayer(
-        "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=BqtwcjnWGsiCTa30jj5M",
-        {
-          //I used the 'Streets' Map from MapTiler. Other formats can be found at https://cloud.maptiler.com/maps/
-          attribution:
-            '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
-        },
-      ).addTo(map);
+        L.tileLayer(
+          "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=BqtwcjnWGsiCTa30jj5M",
+          {
+            //I used the 'Streets' Map from MapTiler. Other formats can be found at https://cloud.maptiler.com/maps/
+            attribution:
+              '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+          },
+        ).addTo(map);
 
-      const geojson = {
-        //Currently hardcoded, once we have the backend working, this will be replaced with a call to the backend to get the geojson data
-        type: "FeatureCollection",
-        features: [
-          {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              coordinates: [-73.76459065761857, 42.65420521050979],
-              type: "Point",
+        const geojson = {
+          //Currently hardcoded, once we have the backend working, this will be replaced with a call to the backend to get the geojson data
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                coordinates: [-73.76459065761857, 42.65420521050979],
+                type: "Point",
+              },
             },
-          },
-          {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              coordinates: [-73.76459065761857, 42.65420521050979],
-              type: "Point",
+            {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                coordinates: [-73.76459065761857, 42.0],
+                type: "Point",
+              },
             },
-          },
-          {
-            type: "Feature",
-            properties: {},
-            geometry: {
-              coordinates: [-73.76459065761857, 42.65420521050979],
-              type: "Point",
+            {
+              type: "Feature",
+              properties: {},
+              geometry: {
+                coordinates: [-73.76459065761857, 42.65420521050979],
+                type: "Point",
+              },
             },
-          },
-        ],
-      };
-      const markers = L.markerClusterGroup(); // Create a marker cluster group
+          ],
+        };
 
-      L.geoJSON(geojson, {
-        pointToLayer: function (feature, latlng) {
-          const marker = L.marker(latlng);
-          if (feature.properties && feature.properties.name) {
-            marker.bindPopup(feature.properties.name);
-          }
-          return marker;
-        },
-      }).eachLayer((layer) => markers.addLayer(layer));
-      map.addLayer(markers);
+        const markers = L.markerClusterGroup(); // Create a marker cluster group
+        L.geoJSON(geojson, {
+          pointToLayer: function (feature, latlng) {
+            const marker = L.marker(latlng);
+            if (feature.properties && feature.properties.name) {
+              marker.bindPopup(feature.properties.name);
+            }
+            return marker;
+          },
+        }).eachLayer((layer) => markers.addLayer(layer));
+
+        map.addLayer(markers);
+      });
     </script>
   </body>
 </html>
