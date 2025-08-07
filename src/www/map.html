@@ -50,7 +50,7 @@
 
       #map {
         width: 100%;
-        height: 400px;
+        height: 600px;
       }
     </style>
   </head>
@@ -168,7 +168,47 @@
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
+      /* 
+      Fetch data from json_name parameter and convert to GeoJSON format 
+
+      Args: json_name (str): The name of the JSON file to fetch data from
+
+      Returns: list: A list of GeoJSON features
+      */
+
+      async function doFetch(json_name) {
+        let features = []
+        const response = await fetch('./' + json_name);
+        const data = await response.json() 
+        for (let i = 0; i < data.length; i++) {
+          features.push({
+            type: "Feature",
+            properties: {name: data[i].name},
+            geometry: {
+              coordinates: [data[i].longitude, data[i].latitude],
+              type: "Point",
+            },
+          })
+        }
+        return features;
+      }
+
+      /* 
+      Create GeoJSON FeatureCollection from fetched data
+
+      Returns: dict: A GeoJSON FeatureCollection
+      */
+      
+      async function createGeojson() {
+        const features = await doFetch('sample.JSON');
+        const geojson = {
+          type: "FeatureCollection",
+          features: features
+        }
+        return geojson;
+      };
+
+      document.addEventListener("DOMContentLoaded", async function () {
         const map = L.map("map").setView([0, 0], 2); // Initialize map with a default view
 
         L.tileLayer(
@@ -180,37 +220,8 @@
           },
         ).addTo(map);
 
-        const geojson = {
-          //Currently hardcoded, once we have the backend working, this will be replaced with a call to the backend to get the geojson data
-          type: "FeatureCollection",
-          features: [
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                coordinates: [-73.76459065761857, 42.65420521050979],
-                type: "Point",
-              },
-            },
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                coordinates: [-73.76459065761857, 42.0],
-                type: "Point",
-              },
-            },
-            {
-              type: "Feature",
-              properties: {},
-              geometry: {
-                coordinates: [-73.76459065761857, 42.65420521050979],
-                type: "Point",
-              },
-            },
-          ],
-        };
-
+        const geojson = await createGeojson(); // Fetch and create GeoJSON data
+        console.log(geojson)
         const markers = L.markerClusterGroup(); // Create a marker cluster group
         L.geoJSON(geojson, {
           pointToLayer: function (feature, latlng) {
