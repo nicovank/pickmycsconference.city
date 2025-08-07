@@ -5,6 +5,7 @@ We'll find a good name for this later.
 ## Adding conference data
 
 Use the following workflow to add a new conference (example for FSE 2024):
+
 ```bash
 # 1. Gather all papers DOI and metadata:
 python3 src/python/dblpscrape.py \

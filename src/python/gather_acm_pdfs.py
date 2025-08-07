@@ -1,5 +1,5 @@
 import argparse
-import pywinauto
+import pywinauto  # type: ignore
 import time
 
 from database_connection import open_connection
