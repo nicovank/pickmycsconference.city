@@ -1,6 +1,29 @@
 # URV Summer 2025
 
-We'll find a good name for this later.
+# [Pick My CS Conference City](https://pickmyconference.city)
+
+## Adding conference data
+
+Use the following workflow to add a new conference (example for FSE 2024):
+
+```bash
+# 1. Gather all papers DOI and metadata:
+python3 src/python/dblpscrape.py \
+  --conference FSE \
+  --year 2024 \
+  --url https://dblp.org/db/conf/sigsoft/fse2024c.html \
+  --longitude -8.485919959103136 \
+  --latitude -35.00119080181853
+
+# 2. Download all PDFs (requires Windows).
+# For ACM conferences:
+python3 src/python/gather_acm_pdfs.py \
+  --conference FSE \
+  --year 2024
+
+# 3. Populate affiliations in database
+[TODO]
+```
 
 ## Development
 
