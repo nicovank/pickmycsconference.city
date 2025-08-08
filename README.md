@@ -1,6 +1,5 @@
 # URV Summer 2025
-
-We'll find a good name for this later.
+# [Pick My CS Conference City](https://pickmyconference.city)
 
 ## Adding conference data
 
