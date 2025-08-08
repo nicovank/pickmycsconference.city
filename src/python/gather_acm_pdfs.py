@@ -33,9 +33,7 @@ def main(args: argparse.Namespace) -> None:
         "SELECT doi FROM papers WHERE conference_short_name = %s AND conference_year = %s",
         (args.conference, args.year),
     )
-    for entry in cursor.fetchall():
-        doi = entry[0]
-        doi = doi[16:]  # TODO: Maybe we shouldn't save that https://doi.org part.
+    for [doi] in cursor.fetchall():
         download_pdf(f"https://dl.acm.org/doi/pdf/{doi}", f"{doi.replace('/', '_')}")
 
 
