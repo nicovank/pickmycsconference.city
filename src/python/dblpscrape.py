@@ -12,6 +12,7 @@ class PaperDetails(TypedDict):
     doi: str
     title: str
     dblp_xml_url: str
+    authors: list[str]
 
 
 # This function grabs main page and takes all the publication IDs from it
@@ -71,8 +72,9 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
 
         ee_tag = soup.find("ee")
         title = soup.find("title")
+        authors = [author.get_text(strip=True) for author in soup.find_all("author")]
 
-        if not soup.find("author"):
+        if not authors:
             print(f"No author found: https://dblp.org/rec/{pub_id}.xml")
             return None
 
@@ -84,6 +86,7 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
                 "doi": doi,
                 "title": title.text,
                 "dblp_xml_url": xml_url,
+                "authors": authors,
             }
     except requests.exceptions.RequestException as e:
         print(f"Error fetching XML for {pub_id}: {e}")
