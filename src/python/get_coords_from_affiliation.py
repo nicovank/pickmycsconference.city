@@ -1,5 +1,4 @@
 import sys
-import json
 import os
 from geopy.geocoders import GoogleV3  # type: ignore
 

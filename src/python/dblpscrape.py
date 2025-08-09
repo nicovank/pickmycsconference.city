@@ -11,7 +11,8 @@ from typing import Optional, TypedDict
 class PaperDetails(TypedDict):
     doi: str
     title: str
-    dblp_xml_url: str
+    dblp_pub_id: str
+    authors: list[str]
 
 
 # This function grabs main page and takes all the publication IDs from it
@@ -54,10 +55,10 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
     """
     Fetches the XML data for a publication and extracts the DOI.
     """
-    xml_url: str = f"https://dblp.org/rec/{pub_id}.xml"
     try:
         response: requests.Response = requests.get(
-            xml_url, headers={"User-Agent": "My-DOI-Scraper/1.0"}
+            f"https://dblp.org/rec/{pub_id}.xml",
+            headers={"User-Agent": "My-DOI-Scraper/1.0"},
         )
 
         if response.status_code == 429:
@@ -71,6 +72,11 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
 
         ee_tag = soup.find("ee")
         title = soup.find("title")
+        authors = [author.get_text(strip=True) for author in soup.find_all("author")]
+
+        if not authors:
+            print(f"No author found: https://dblp.org/rec/{pub_id}.xml")
+            return None
 
         if not soup.find("author"):
             print(f"No author found: https://dblp.org/rec/{pub_id}.xml")
@@ -83,7 +89,8 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
             return {
                 "doi": doi,
                 "title": title.text,
-                "dblp_xml_url": xml_url,
+                "dblp_pub_id": pub_id,
+                "authors": authors,
             }
     except requests.exceptions.RequestException as e:
         print(f"Error fetching XML for {pub_id}: {e}")
@@ -125,7 +132,7 @@ def insert_paper(
     Returns True if a new record was inserted, False otherwise.
     """
     sql = """
-        INSERT INTO papers (doi, title, conference_short_name, conference_year, dblp_xml_url)
+        INSERT INTO papers (doi, title, conference_short_name, conference_year, dblp_pub_id)
         VALUES (%s, %s, %s, %s, %s)
         ON CONFLICT (doi) DO NOTHING;
     """
@@ -139,7 +146,7 @@ def insert_paper(
                 paper["title"],
                 conf_name,
                 conf_year,
-                paper["dblp_xml_url"],
+                paper["dblp_pub_id"],
             ),
         )
         return cur.rowcount > 0

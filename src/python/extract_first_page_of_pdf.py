@@ -13,7 +13,6 @@ def extract_first_page_of_pdf(pdf: str, desired_path: str) -> None:
 dfjkgnbjksndfnjdbf nms
     reader = PdfReader(pdf)
     writer = PdfWriter()
-    base_name = pdf.replace(".pdf", "")
 
     # Add the first page to the writer
     if len(reader.pages) > 0:
@@ -22,7 +21,6 @@ dfjkgnbjksndfnjdbf nms
     # Write the first page to the desired path
     with open(desired_path, "wb") as output_pdf:
         writer.write(output_pdf)
-    print(f"First page of {base_name} saved to {desired_path}")
 
 
 if __name__ == "__main__":
