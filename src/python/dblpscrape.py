@@ -77,8 +77,11 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
             return None
 
         if title and ee_tag:
+            doi = ee_tag.text
+            assert doi.startswith("https://doi.org/")
+            doi = doi[16:]
             return {
-                "doi": ee_tag.text,
+                "doi": doi,
                 "title": title.text,
                 "dblp_xml_url": xml_url,
             }
