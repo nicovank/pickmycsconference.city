@@ -12,6 +12,7 @@ TABLES_SQL: list[str] = [
     CREATE TABLE conference_happenings (
         conference_short_name VARCHAR(50) NOT NULL,
         year INTEGER NOT NULL,
+        city VARCHAR(255) NOT NULL,
         latitude DOUBLE PRECISION,
         longitude DOUBLE PRECISION,
         PRIMARY KEY (conference_short_name, year)
@@ -23,7 +24,7 @@ TABLES_SQL: list[str] = [
         title TEXT,
         conference_short_name VARCHAR(50),
         conference_year INTEGER,
-        dblp_xml_url VARCHAR(255),
+        dblp_pub_id VARCHAR(255),
         manually_edited BOOLEAN DEFAULT FALSE NOT NULL,
         FOREIGN KEY(conference_short_name, conference_year) REFERENCES conference_happenings(conference_short_name, year)
     );
