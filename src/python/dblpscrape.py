@@ -72,6 +72,10 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
         ee_tag = soup.find("ee")
         title = soup.find("title")
 
+        if not soup.find("author"):
+            print(f"No author found: https://dblp.org/rec/{pub_id}.xml")
+            return None
+
         if title and ee_tag:
             return {
                 "doi": ee_tag.text,
