@@ -98,15 +98,20 @@ def get_details_from_xml(pub_id: str) -> Optional[PaperDetails]:
 
 
 def ensure_conference_exists(
-    cur: Cursor, conference_name: str, year: int, latitude: str, longitude: str
+    cur: Cursor,
+    conference_name: str,
+    city: str,
+    year: int,
+    latitude: str,
+    longitude: str,
 ) -> None:
     """
     Ensures the conference and its specific year happening exist in the database(foreign key constraints).
     """
     try:
         sql = """
-            INSERT INTO conference_happenings (conference_short_name, year, latitude, longitude)
-            VALUES (%s, %s, %s, %s)
+            INSERT INTO conference_happenings (conference_short_name, city, year, latitude, longitude)
+            VALUES (%s, %s, %s, %s, %s)
             ON CONFLICT (conference_short_name, year) DO NOTHING;
         """
         # ON CONFLICT (conference_short_name, year) DO UPDATE SET
@@ -115,7 +120,7 @@ def ensure_conference_exists(
 
         cur.execute(
             sql,
-            (conference_name, year, latitude, longitude),
+            (conference_name, city, year, latitude, longitude),
         )
     except Exception as e:
         print(f"Error during conference insertion: {e}")
@@ -168,6 +173,11 @@ def main() -> None:
         help="The short name of the conference",
     )
     parser.add_argument(
+        "--city",
+        required=True,
+        help="The city where the conference is held",
+    )
+    parser.add_argument(
         "--year",
         required=True,
         type=int,
@@ -193,7 +203,7 @@ def main() -> None:
         print("Connected to DB")
 
         ensure_conference_exists(
-            cur, args.conference, args.year, args.latitude, args.longitude
+            cur, args.conference, args.city, args.year, args.latitude, args.longitude
         )
         conn.commit()
 
