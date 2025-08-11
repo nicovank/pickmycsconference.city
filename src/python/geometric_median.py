@@ -4,8 +4,6 @@ import numpy as np
 from geopy.distance import geodesic  # type: ignore
 from scipy.optimize import minimize  # type: ignore
 
-cities = json.loads(open("../www/sample.json").read())
-
 
 def get_geometric_median(JSON_path: str) -> tuple[tuple[float, float], float]:
     """
