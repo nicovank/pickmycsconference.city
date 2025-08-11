@@ -1,21 +1,12 @@
+import sys
+
 import psycopg2
+
 from get_coords_from_affiliation import get_coords_from_affiliation
 from database_connection import open_connection
 
 
-# sample affiliations
-list_of_affiliations = [
-    "Umass Amherst",
-    "Villanova University",
-    "University of Wisconsin-Madison",
-    "Oxford University",
-    "Kyoto University",
-]
-
-
-def handle_conflict(
-    cursor: psycopg2.extensions.cursor, coords: tuple[float, float], affiliation: str
-) -> None:
+def insert_affiliation(cursor: psycopg2.extensions.cursor, affiliation: str) -> None:
     """
     Handle the conflict when inserting an affiliation into the database.
     If the affiliation already exists, ask user whether to update the coordinates
@@ -24,13 +15,15 @@ def handle_conflict(
         cursor: The database cursor.
         affiliation: The affiliation to handle.
     """
+    coords = get_coords_from_affiliation(affiliation)
+
     cursor.execute(
         "SELECT latitude, longitude FROM affiliations WHERE affiliation_name = %s",
         (affiliation,),
     )
     existing_coords = cursor.fetchone()
 
-    # if Affiliation exists in database
+    # If affiliation exists in database.
     if existing_coords:
         # Do nothing if the coordinates match or if the entry has been manually edited
         if (
@@ -61,19 +54,13 @@ def handle_conflict(
 
 
 def main() -> None:
-    # Connect to the database
+    if len(sys.argv) != 2:
+        print("Usage: python coords_entry.py <affiliation>")
+        sys.exit(1)
+
     conn = open_connection()
-
     cursor = conn.cursor()
-
-    for affiliation in list_of_affiliations:
-        # Get coordinates from the affiliation
-
-        coords = get_coords_from_affiliation(affiliation)
-
-        # Insert the coordinates into the database
-        handle_conflict(cursor, coords, affiliation)
-    # Commit the changes and close the connection
+    insert_affiliation(cursor, sys.argv[1])
     conn.commit()
     cursor.close()
     conn.close()
