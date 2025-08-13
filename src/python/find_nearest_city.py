@@ -1,6 +1,6 @@
 import sys
 import csv
-from geometric_median import get_geometric_median
+from geometric_median import get_geometric_median_from_file
 from geopy.distance import geodesic  # type: ignore
 
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print(f"Usage: {sys.argv[0]} <path_to_json>")
         sys.exit(1)
     JSON_path = sys.argv[1]
-    median_coords, total_distance = get_geometric_median(JSON_path)
+    median_coords, total_distance = get_geometric_median_from_file(JSON_path)
     print(f"Geometric Median Coordinates: {median_coords}")
     city = find_nearest_city(median_coords)
     print(city)
