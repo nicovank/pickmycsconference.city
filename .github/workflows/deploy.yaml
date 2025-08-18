@@ -1,0 +1,30 @@
+name: Deploy to website
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+concurrency:
+  group: deploy-to-website
+  cancel-in-progress: false
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install SSH Key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      - name: Deploy
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ${{ github.workspace }}/src/www/ root@${{ secrets.DROPLET_IP }}:/var/www/html
