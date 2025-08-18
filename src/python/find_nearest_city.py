@@ -1,3 +1,4 @@
+import os
 import sys
 import csv
 from geometric_median import get_geometric_median
