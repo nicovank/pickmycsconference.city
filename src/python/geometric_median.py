@@ -1,8 +1,6 @@
 import sys
 import json
-import numpy as np
-from geopy.distance import geodesic  # type: ignore
-from scipy.optimize import minimize  # type: ignore
+import math
 
 
 def calculate_geometric_median_from_coords(
@@ -10,23 +8,41 @@ def calculate_geometric_median_from_coords(
 ) -> tuple[tuple[float, float], float]:
     """
     Calculates the geometric median from a list of coordinates.
-    This is the core logic function.
     """
-    # Use the average coordinate as the starting point for the optimization
-    lat0 = np.mean([latitude for latitude, _ in coords])
-    lon0 = np.mean([longitude for _, longitude in coords])
-    initial_guess = np.array([lat0, lon0])
 
-    def get_total_distance(point: np.ndarray) -> float:
-        """Calculates the sum of geodesic distances from a point to all coordinates."""
-        return float(sum(geodesic(point, coord).miles for coord in coords))
+    # Initial estimate: centroid
+    x = sum(p[0] for p in coords) / len(coords)
+    y = sum(p[1] for p in coords) / len(coords)
 
-    # Find the point that minimizes the total distance
-    result = minimize(get_total_distance, initial_guess, method="Nelder-Mead")
+    # Convergence parameters
+    tolerance = 1e-7
+    max_iterations = 1000
 
-    best_point = (float(result.x[0]), float(result.x[1]))
-    distance = float(result.fun)
-    return (best_point, distance)
+    for _ in range(max_iterations):
+        num_x = 0.0
+        num_y = 0.0
+        denom = 0.0
+        for px, py in coords:
+            dist = math.hypot(x - px, y - py)
+            # Avoid division by zero
+            if dist < tolerance:
+                return (px, py), sum(math.hypot(px - cx, py - cy) for cx, cy in coords)
+            weight = 1 / dist
+            num_x += px * weight
+            num_y += py * weight
+            denom += weight
+
+        new_x = num_x / denom
+        new_y = num_y / denom
+
+        if math.hypot(new_x - x, new_y - y) < tolerance:
+            x, y = new_x, new_y
+            break
+
+        x, y = new_x, new_y
+
+    total_distance = sum(math.hypot(x - px, y - py) for px, py in coords)
+    return (x, y), total_distance
 
 
 def get_geometric_median_from_file(JSON_path: str) -> tuple[tuple[float, float], float]:
