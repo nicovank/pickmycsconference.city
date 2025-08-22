@@ -7,3 +7,31 @@ html {
   width: 100%;
   height: 600px;
 }
+
+/* Small cluster */
+.marker-cluster-small div {
+  background-color: #a6dbf7; /* lighter than outer glow */
+}
+
+.marker-cluster-small {
+  background-color: rgba(135, 206, 250, 0.5); /* light blue glow */
+}
+
+/* Medium cluster */
+.marker-cluster-medium div {
+  background-color: #73aeed; /* your original mid blue */
+}
+
+.marker-cluster-medium {
+  background-color: rgba(70, 142, 220, 0.5); /* deeper glow */
+}
+
+/* Large cluster */
+.marker-cluster-large div {
+  background-color: #3a5ccf; /* bold blue */
+}
+
+.marker-cluster-large {
+  background-color: rgba(58, 92, 207, 0.6); /* outer ring */
+}
+
