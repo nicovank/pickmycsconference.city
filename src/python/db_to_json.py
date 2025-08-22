@@ -2,9 +2,8 @@ import json
 import os
 import psycopg2
 from database_connection import open_connection
-
-# from find_nearest_city import find_nearest_city
-# from geometric_median import calculate_geometric_median_from_coords
+from find_nearest_city import find_nearest_city
+from geometric_median import calculate_geometric_median_from_coords
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "www", "data")
 
@@ -66,15 +65,15 @@ def generate_json_for_frontend() -> None:
                     (conf_name, year),
                 )
                 all = cur.fetchall()
-                # coords = [(sub[2], sub[3]) for sub in all]
-                # suggested_city_name = "Unknown"
+                coords = [(sub[2], sub[3]) for sub in all]
+                suggested_city_name = "Unknown"
 
-                # if coords:
-                #     median_coords_tuple, total_distance = (
-                #         calculate_geometric_median_from_coords(coords)
-                #     )
-                #     nearest_city_info = find_nearest_city(median_coords_tuple)
-                #     suggested_city_name = f"{nearest_city_info.get("city", "Unknown")}"
+                if coords:
+                    median_coords_tuple, total_distance = (
+                        calculate_geometric_median_from_coords(coords)
+                    )
+                    nearest_city_info = find_nearest_city(median_coords_tuple)
+                    suggested_city_name = f"{nearest_city_info.get("city", "Unknown")}"
 
                 submissions = []
                 for author_name, aff_name, aff_lat, aff_lon in all:
@@ -94,7 +93,7 @@ def generate_json_for_frontend() -> None:
                         "latitude": conf_lat,
                         "longitude": conf_lon,
                     },
-                    # "suggested_city": suggested_city_name,
+                    "suggested_city": suggested_city_name,
                     "submissions": submissions,
                 }
                 output_data["happenings"].append(happening_data)

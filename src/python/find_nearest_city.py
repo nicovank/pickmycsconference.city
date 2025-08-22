@@ -7,7 +7,7 @@ from geopy.distance import geodesic  # type: ignore
 
 def find_nearest_city(target_coords: tuple[float, float]) -> dict[str, str | float]:
     cities_path = os.path.join(os.path.dirname(__file__), "worldcities.csv")
-    with open("worldcities.csv", "r", encoding="utf-8") as file:
+    with open(cities_path, "r", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         cities = list(reader)
 
