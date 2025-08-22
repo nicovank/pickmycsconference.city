@@ -10,12 +10,20 @@ async function doFetch(json_name) {
   const features = [];
   const response = await fetch("./" + json_name);
   const data = await response.json();
-  for (let i = 0; i < data.length; i++) {
+
+  const submissions = data.happenings[0].submissions;
+
+  for (let i = 0; i < submissions.length; i++) {
     features.push({
       type: "Feature",
-      properties: { name: data[i].name },
+      properties: {
+        name: submissions[i].affiliation_name,
+      },
       geometry: {
-        coordinates: [data[i].longitude, data[i].latitude],
+        coordinates: [
+          submissions[i].location.longitude,
+          submissions[i].location.latitude,
+        ],
         type: "Point",
       },
     });
@@ -29,8 +37,8 @@ Create GeoJSON FeatureCollection from fetched data
 Returns: dict: A GeoJSON FeatureCollection
 */
 
-async function createGeojson() {
-  const features = await doFetch("sample.JSON");
+async function createGeojson(json_name = "data/FSE.json") {
+  const features = await doFetch(json_name);
   const geojson = {
     type: "FeatureCollection",
     features: features,
@@ -39,13 +47,40 @@ async function createGeojson() {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
+  // Initialize red marker function & style
+  function addRedMarker(lat, lng, city = "") {
+    var marker = L.marker([lat, lng], { icon: redIcon });
+    if (city) {
+      marker.bindPopup(city);
+    }
+    marker.addTo(map);
+  }
+
+  var redIcon = new L.Icon({
+    iconUrl:
+      "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  });
+
   // Initialize map with a default view and set minimum zoom.
-  const map = L.map("map", { minZoom: 2 }).setView([0, 0], 2);
+
+  const map = L.map("map", {
+    minZoom: 2,
+    maxBounds: [
+      [-90, -180],
+      [90, 180],
+    ],
+  }).setView([0, 0], 2);
 
   L.tileLayer(
     "https://api.maptiler.com/maps/streets-v2/{z}/{x}/{y}.png?key=BqtwcjnWGsiCTa30jj5M",
     {
-      //I used the 'Streets' Map from MapTiler. Other formats can be found at https://cloud.maptiler.com/maps/
+      // I used the 'Streets' Map from MapTiler. Other formats can be found at https://cloud.maptiler.com/maps/
       attribution:
         '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
     },
@@ -53,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   const geojson = await createGeojson(); // Fetch and create GeoJSON data
   const markers = L.markerClusterGroup(); // Create a marker cluster group
+
   L.geoJSON(geojson, {
     pointToLayer: function (feature, latlng) {
       const marker = L.marker(latlng);
@@ -64,4 +100,5 @@ document.addEventListener("DOMContentLoaded", async function () {
   }).eachLayer((layer) => markers.addLayer(layer));
 
   map.addLayer(markers);
+  addRedMarker(45.4685, 9, "Milan");
 });
