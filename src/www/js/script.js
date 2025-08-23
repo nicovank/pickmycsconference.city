@@ -6,8 +6,6 @@ Args: json_name (str): The name of the JSON file to fetch data from
 Returns: list: A list of GeoJSON features
 */
 
-let map;
-
 const redIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -19,7 +17,7 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-async function addSuggestedCityMarker(data) {
+async function addSuggestedCityMarker(map, data) {
   const location = data.suggested_location;
 
   const lat = Number(location.latitude);
@@ -63,7 +61,7 @@ Create GeoJSON FeatureCollection from fetched data
 Returns: dict: A GeoJSON FeatureCollection
 */
 
-async function createGeojson(json_name = "data/FSE.json") {
+async function createGeojson(json_name) {
   const { features, data } = await doFetch(json_name);
   const geojson = {
     type: "FeatureCollection",
@@ -75,7 +73,7 @@ async function createGeojson(json_name = "data/FSE.json") {
 document.addEventListener("DOMContentLoaded", async function () {
   // Initialize map with a default view and set minimum zoom.
 
-  map = L.map("map", {
+  const map = L.map("map", {
     minZoom: 2,
     maxBounds: [
       [-90, -180],
@@ -92,7 +90,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     },
   ).addTo(map);
 
-  const { geojson, data } = await createGeojson(); // Fetch and create GeoJSON data
+  // Fetch and create GeoJSON data.
+  const { geojson, data } = await createGeojson("data/FSE.json");
   const markers = L.markerClusterGroup(); // Create a marker cluster group
 
   L.geoJSON(geojson, {
@@ -107,5 +106,5 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   map.addLayer(markers);
 
-  addSuggestedCityMarker(data);
+  addSuggestedCityMarker(map, data);
 });
