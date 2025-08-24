@@ -2,9 +2,8 @@ import json
 import os
 import psycopg2
 from database_connection import open_connection
-
-# from find_nearest_city import find_nearest_city
-# from geometric_median import calculate_geometric_median_from_coords
+from find_nearest_city import find_nearest_city
+from geometric_median import calculate_geometric_median_from_coords
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "www", "data")
 
@@ -29,7 +28,15 @@ def generate_json_for_frontend() -> None:
         for conf_name in conference_names:
             print(f"Conference: {conf_name}...")
 
-            output_data = {"conference_short_name": conf_name, "happenings": []}
+            output_data = {
+                "conference_short_name": conf_name,
+                "suggested_location": {
+                    "city": "Unknown",
+                    "latitude": None,
+                    "longitude": None,
+                },
+                "happenings": [],
+            }
 
             # Get all happenings for the conference
             cur.execute(
@@ -42,6 +49,8 @@ def generate_json_for_frontend() -> None:
                 (conf_name,),
             )
             happenings = cur.fetchall()
+
+            all_coords = []
 
             for year, conf_city, conf_lat, conf_lon in happenings:
                 # Get all submissions and their locations for the happening
@@ -66,15 +75,9 @@ def generate_json_for_frontend() -> None:
                     (conf_name, year),
                 )
                 all = cur.fetchall()
-                # coords = [(sub[2], sub[3]) for sub in all]
-                # suggested_city_name = "Unknown"
 
-                # if coords:
-                #     median_coords_tuple, total_distance = (
-                #         calculate_geometric_median_from_coords(coords)
-                #     )
-                #     nearest_city_info = find_nearest_city(median_coords_tuple)
-                #     suggested_city_name = f"{nearest_city_info.get("city", "Unknown")}"
+                coords = [(sub[2], sub[3]) for sub in all]
+                all_coords.extend(coords)
 
                 submissions = []
                 for author_name, aff_name, aff_lat, aff_lon in all:
@@ -94,10 +97,21 @@ def generate_json_for_frontend() -> None:
                         "latitude": conf_lat,
                         "longitude": conf_lon,
                     },
-                    # "suggested_city": suggested_city_name,
                     "submissions": submissions,
                 }
                 output_data["happenings"].append(happening_data)
+
+            if all_coords:
+                median_coords_tuple, total_distance = (
+                    calculate_geometric_median_from_coords(all_coords)
+                )
+                nearest_city_info = find_nearest_city(median_coords_tuple)
+
+            output_data["suggested_location"] = {
+                "city": nearest_city_info.get("city", "Unknown"),
+                "latitude": nearest_city_info.get("latitude", None),
+                "longitude": nearest_city_info.get("longitude", None),
+            }
 
             # Write data to JSON file
             output_f = os.path.join(OUTPUT_DIR, f"{conf_name}.json")
