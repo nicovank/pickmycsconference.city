@@ -94,6 +94,66 @@ document.addEventListener("DOMContentLoaded", async function () {
     },
   ).addTo(map);
 
+  // START: Add Legend Control
+  const legend = L.control({ position: "bottomright" });
+
+  legend.onAdd = function (map) {
+    const div = L.DomUtil.create("div", "info legend card p-2");
+    const grades = [
+      {
+        label: "Suggested City",
+        type: "icon",
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png"
+      },
+      {
+        label: "Author Affiliation",
+        type: "icon",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png"
+      },
+      {
+        label: "Large Cluster",
+        type: "swatch",
+        color: "#3a5ccf" // From .marker-cluster-large div
+      },
+      {
+        label: "Medium Cluster",
+        type: "swatch",
+        color: "#73aeed" // From .marker-cluster-medium div
+      },
+      {
+        label: "Small Cluster",
+        type: "swatch",
+        color: "#a6dbf7" // From .marker-cluster-small div
+      }
+    ];
+
+    let innerHTML = "<h6>Legend</h6>";
+    
+    // Updated loop to handle both icons and color swatches
+    for (let i = 0; i < grades.length; i++) {
+        let item = grades[i];
+        let symbol;
+
+        if (item.type === "icon") {
+            symbol = '<img src="' + item.iconUrl + '" class="legend-icon" alt="' + item.label + '">';
+        } else if (item.type === "swatch") {
+            symbol = '<i class="legend-swatch" style="background:' + item.color + '"></i>';
+        }
+
+        innerHTML +=
+        '<div class="d-flex align-items-center">' +
+        symbol + ' ' +
+        '<span>' + item.label + '</span>' +
+        '</div>';
+    }
+    div.innerHTML = innerHTML;
+    return div;
+  };
+
+
+  legend.addTo(map);
+  // END: Add Legend Control
+
   // Fetch and create GeoJSON data.
   const { geojson, data } = await createGeojson("data/FSE.json");
   const markers = L.markerClusterGroup(); // Create a marker cluster group
