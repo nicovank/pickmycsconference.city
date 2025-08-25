@@ -7,13 +7,15 @@
 Use the following workflow to add a new conference (example for FSE 2024):
 
 ```bash
-# 1. Gather all papers DOI and metadata:
+# 1. Gather all papers DOI and metadata.
+# (Repeat in case there are multiple DBLP links for a single conference.)
 python3 src/python/dblpscrape.py \
   --conference FSE \
   --year 2024 \
   --url https://dblp.org/db/conf/sigsoft/fse2024c.html \
-  --longitude -8.485919959103136 \
-  --latitude -35.00119080181853
+  --city 'Porto de Galinhas' \
+  --latitude -35.00119080181853 \
+  --longitude -8.485919959103136
 
 # 2. Download all PDFs (requires Windows).
 # For ACM conferences:
@@ -22,7 +24,7 @@ python3 src/python/gather_acm_pdfs.py \
   --year 2024
 
 # 3. Populate affiliations in database
-[TODO]
+python3 src/python/fill_affiliations.py --conference FSE --year 2024 --pdf-directory '.pdfs/FSE 2024'
 ```
 
 ## Development
