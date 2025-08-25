@@ -1,11 +1,3 @@
-/* 
-Fetch data from json_name parameter and convert to GeoJSON format 
-
-Args: json_name (str): The name of the JSON file to fetch data from
-
-Returns: list: A list of GeoJSON features
-*/
-
 const redIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -17,6 +9,10 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+/* 
+Fetches suggested location from json and adds a red marker to the map
+
+*/
 async function addSuggestedCityMarker(map, data) {
   const location = data.suggested_location;
 
@@ -29,6 +25,14 @@ async function addSuggestedCityMarker(map, data) {
   }
   marker.addTo(map);
 }
+
+/* 
+Fetch data from json_name parameter and convert to GeoJSON format 
+
+Args: json_name (str): The name of the JSON file to fetch data from
+
+Returns: list: A list of GeoJSON features
+*/
 
 async function doFetch(json_name) {
   const features = [];
@@ -107,4 +111,40 @@ document.addEventListener("DOMContentLoaded", async function () {
   map.addLayer(markers);
 
   addSuggestedCityMarker(map, data);
+
+  function disableMapInteractions() {
+    map.dragging.disable();
+    map.scrollWheelZoom.disable();
+    map.doubleClickZoom.disable();
+    map.touchZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+  }
+
+  function enableMapInteractions() {
+    map.dragging.enable();
+    map.scrollWheelZoom.enable();
+    map.doubleClickZoom.enable();
+    map.touchZoom.enable();
+    map.boxZoom.enable();
+    map.keyboard.enable();
+  }
+
+  document.addEventListener('show.bs.dropdown', function (e) {
+    if (e.target.closest('#map .dropdown')) {
+      disableMapInteractions();
+    }
+  }, true);
+
+  document.addEventListener('hide.bs.dropdown', function (e) {
+    if (e.target.closest('#map .dropdown')) {
+      enableMapInteractions();
+    }
+  }, true);
+
+  document.addEventListener('hidden.bs.dropdown', function (e) {
+    if (e.target.closest('#map .dropdown')) {
+      enableMapInteractions();
+    }
+  }, true);
 });
