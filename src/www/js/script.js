@@ -41,7 +41,11 @@ async function doFetch(json_name) {
     features.push({
       type: "Feature",
       properties: {
-        name: submissions[i].author_name + " (" + submissions[i].affiliation_name.split(",")[0] + ")",
+        name:
+          submissions[i].author_name +
+          " (" +
+          submissions[i].affiliation_name.split(",")[0] +
+          ")",
       },
       geometry: {
         coordinates: [
