@@ -20,7 +20,7 @@ def get_coords_from_affiliation(affiliation: str) -> tuple[float, float]:
     if location:
         return location.latitude, location.longitude
     else:
-        raise Exception("Location not found")
+        raise Exception(f"Location not found: {affiliation}")
 
 
 if __name__ == "__main__":
