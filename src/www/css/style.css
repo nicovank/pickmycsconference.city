@@ -34,25 +34,3 @@ html {
 .marker-cluster-large {
   background-color: rgba(58, 92, 207, 0.6);
 }
-
-/* Legend styles */
-.info.legend {
-  background-color: white;
-  width: 180px; /* Adjust as needed */
-  line-height: 1.5;
-}
-
-.legend-icon {
-  width: 15px;
-  height: auto;
-  margin-right: 8px;
-}
-
-.legend-swatch {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%; /* This makes it a circle */
-  margin-right: 8px;
-  vertical-align: middle; /* Aligns the circle nicely with the text */
-}

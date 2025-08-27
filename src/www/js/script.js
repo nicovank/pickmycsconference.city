@@ -1,3 +1,11 @@
+/* 
+Fetch data from json_name parameter and convert to GeoJSON format 
+
+Args: json_name (str): The name of the JSON file to fetch data from
+
+Returns: list: A list of GeoJSON features
+*/
+
 const redIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -9,10 +17,6 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-/* 
-Fetches suggested location from json and adds a red marker to the map
-
-*/
 async function addSuggestedCityMarker(map, data) {
   const location = data.suggested_location;
 
@@ -25,14 +29,6 @@ async function addSuggestedCityMarker(map, data) {
   }
   marker.addTo(map);
 }
-
-/* 
-Fetch data from json_name parameter and convert to GeoJSON format 
-
-Args: json_name (str): The name of the JSON file to fetch data from
-
-Returns: list: A list of GeoJSON features
-*/
 
 async function doFetch(json_name) {
   const features = [];
@@ -94,75 +90,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     },
   ).addTo(map);
 
-  // START: Add Legend Control
-  const legend = L.control({ position: "bottomright" });
-
-  legend.onAdd = function (map) {
-    const div = L.DomUtil.create("div", "info legend card p-2");
-    const grades = [
-      {
-        label: "Suggested City",
-        type: "icon",
-        iconUrl:
-          "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
-      },
-      {
-        label: "Author Affiliation",
-        type: "icon",
-        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      },
-      {
-        label: "Large Cluster",
-        type: "swatch",
-        color: "#3a5ccf", // From .marker-cluster-large div
-      },
-      {
-        label: "Medium Cluster",
-        type: "swatch",
-        color: "#73aeed", // From .marker-cluster-medium div
-      },
-      {
-        label: "Small Cluster",
-        type: "swatch",
-        color: "#a6dbf7", // From .marker-cluster-small div
-      },
-    ];
-
-    let innerHTML = "<h6>Legend</h6>";
-
-    // Updated loop to handle both icons and color swatches
-    for (let i = 0; i < grades.length; i++) {
-      let item = grades[i];
-      let symbol;
-
-      if (item.type === "icon") {
-        symbol =
-          '<img src="' +
-          item.iconUrl +
-          '" class="legend-icon" alt="' +
-          item.label +
-          '">';
-      } else if (item.type === "swatch") {
-        symbol =
-          '<i class="legend-swatch" style="background:' + item.color + '"></i>';
-      }
-
-      innerHTML +=
-        '<div class="d-flex align-items-center">' +
-        symbol +
-        " " +
-        "<span>" +
-        item.label +
-        "</span>" +
-        "</div>";
-    }
-    div.innerHTML = innerHTML;
-    return div;
-  };
-
-  legend.addTo(map);
-  // END: Add Legend Control
-
   // Fetch and create GeoJSON data.
   const { geojson, data } = await createGeojson("data/FSE.json");
   const markers = L.markerClusterGroup(); // Create a marker cluster group
@@ -180,82 +107,4 @@ document.addEventListener("DOMContentLoaded", async function () {
   map.addLayer(markers);
 
   addSuggestedCityMarker(map, data);
-
-  // Disable map interactions when dropdown is shown and enable them when hidden
-  function disableMapInteractions() {
-    map.dragging.disable();
-    map.scrollWheelZoom.disable();
-    map.doubleClickZoom.disable();
-    map.touchZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-  }
-
-  // Enable map interactions
-  function enableMapInteractions() {
-    map.dragging.enable();
-    map.scrollWheelZoom.enable();
-    map.doubleClickZoom.enable();
-    map.touchZoom.enable();
-    map.boxZoom.enable();
-    map.keyboard.enable();
-  }
-
-  document.addEventListener(
-    "show.bs.dropdown",
-    function (e) {
-      if (e.target.closest("#map .dropdown")) {
-        disableMapInteractions();
-      }
-    },
-    true,
-  );
-
-  document.addEventListener(
-    "hide.bs.dropdown",
-    function (e) {
-      if (e.target.closest("#map .dropdown")) {
-        enableMapInteractions();
-      }
-    },
-    true,
-  );
-
-  document.addEventListener(
-    "hidden.bs.dropdown",
-    function (e) {
-      if (e.target.closest("#map .dropdown")) {
-        enableMapInteractions();
-      }
-    },
-    true,
-  );
-
-  // Change map data based on dropdown selection
-  const items = document.querySelectorAll("#map .dropdown-item");
-  items.forEach((item) => {
-    item.addEventListener("click", function (e) {
-      e.preventDefault(); // prevent page jump if it's an <a href="#">
-      const file = this.dataset.file; // get the data-file attribute
-      console.log("Loading:", fileName);
-
-      map.removeLayer(markers); // Remove existing markers
-      createGeojson(file).then(({ geojson, data }) => {
-        const newMarkers = L.markerClusterGroup(); // Create a new marker cluster group
-
-        L.geoJSON(geojson, {
-          pointToLayer: function (feature, latlng) {
-            const marker = L.marker(latlng);
-            if (feature.properties && feature.properties.name) {
-              marker.bindPopup(feature.properties.name);
-            }
-            return marker;
-          },
-        }).eachLayer((layer) => newMarkers.addLayer(layer));
-
-        map.addLayer(newMarkers); // Add new markers to the map
-        addSuggestedCityMarker(map, data); // Add suggested city marker if available
-      });
-    });
-  });
 });
