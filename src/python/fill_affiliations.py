@@ -18,6 +18,8 @@ def main(args: argparse.Namespace) -> None:
 
     print(f"Processing {cursor.rowcount} papers...")
 
+    errors: list[str] = []
+
     for entry in cursor.fetchall():
         print("\n")
         doi, dblp_pub_id = entry
@@ -32,8 +34,22 @@ def main(args: argparse.Namespace) -> None:
         for i, author in enumerate(authors):
             print(f" {i + 1}. {author}")
 
+        # If paper exists with same number of authors in the database, skip it.
+        cursor.execute(
+            "SELECT COUNT(*) FROM paper_affiliations WHERE paper_doi = %s",
+            (doi,),
+        )
+        if cursor.fetchone()[0] == len(authors):
+            print(f"Paper already has affiliations in database. Skipping.")
+            continue
+
         pdf_path = f"{args.pdf_directory}/{doi.replace('/', '_')}.pdf"
-        affiliations = get_affiliations(pdf_path)
+        try:
+            affiliations = get_affiliations(pdf_path)
+        except Exception as e:
+            print("[ERROR] Some error getting info from OpenAI.")
+            errors.append(f"{doi} / {str(e)}")
+            continue
         print("Authors and affiliations according to OpenAI:")
         for i, (author_name, affiliation) in enumerate(affiliations):
             print(f" {i + 1}. {author_name}: {affiliation}")
@@ -82,22 +98,13 @@ def main(args: argparse.Namespace) -> None:
             print(f" {author}: {affiliation}")
 
         for author, affiliation in author_to_affiliation.items():
-            cursor.execute(
-                "SELECT affiliation_name FROM paper_affiliations WHERE paper_doi = %s AND author_name = %s",
-                (doi, author),
-            )
-            existing_entry = cursor.fetchone()
-            if existing_entry:
-                if existing_entry[0] == affiliation:
-                    print(f"Entry for {doi}/{author} already exists. Skipping.")
-                else:
-                    print("[WARNING] Conflict detected!")
-                    print(f"    Existing entry: {existing_entry[0]}")
-                    print(f"    New entry: {affiliation}")
-                continue
-
             # First, insert into affiliations with location.
-            insert_affiliation(cursor, affiliation)
+            try:
+                insert_affiliation(cursor, affiliation)
+            except:
+                print(f"[ERROR] Failed to map affiliation: {affiliation}")
+                errors.append(f"{doi} / {author} / {affiliation}")
+                continue
 
             # Then, insert into paper_affiliations.
             cursor.execute(
@@ -110,8 +117,13 @@ def main(args: argparse.Namespace) -> None:
             assert cursor.rowcount == 1
             print(f"Inserted entry for {doi}/{author}: {affiliation}")
 
-            # Commit.
-            connection.commit()
+        # Commit.
+        connection.commit()
+
+    print("\n\n")
+    print("LIST OF ERRORS, PLEASE ADD MANUALLY:")
+    for e in errors:
+        print(e)
 
 
 if __name__ == "__main__":
