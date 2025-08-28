@@ -18,7 +18,8 @@ def insert_affiliation(cursor: psycopg2.extensions.cursor, affiliation: str) -> 
         "SELECT COUNT(*) FROM affiliations WHERE affiliation_name = %s",
         (affiliation,),
     )
-    if cursor.fetchone()[0]:
+    result = cursor.fetchone()
+    if result and result[0]:
         return
 
     coords = get_coords_from_affiliation(affiliation)

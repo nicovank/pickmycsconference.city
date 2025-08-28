@@ -39,7 +39,8 @@ def main(args: argparse.Namespace) -> None:
             "SELECT COUNT(*) FROM paper_affiliations WHERE paper_doi = %s",
             (doi,),
         )
-        if cursor.fetchone()[0] == len(authors):
+        result = cursor.fetchone()
+        if result and result[0] == len(authors):
             print(f"Paper already has affiliations in database. Skipping.")
             continue
 
@@ -122,8 +123,8 @@ def main(args: argparse.Namespace) -> None:
 
     print("\n\n")
     print("LIST OF ERRORS, PLEASE ADD MANUALLY:")
-    for e in errors:
-        print(e)
+    for error in errors:
+        print(error)
 
 
 if __name__ == "__main__":
