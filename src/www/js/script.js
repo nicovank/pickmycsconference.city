@@ -90,7 +90,6 @@ async function populateMap(map, json = "data/FSE.json") {
   map.addLayer(markers);
 
   const suggested_city_marker = await addSuggestedCityMarker(map, data);
-  map.fitBounds(markers.getBounds().pad(0.5));
   return { markers, suggested_city_marker };
 }
 
@@ -116,8 +115,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   let currentMarkers, currentSuggestedCityMarker;
 
-  ({ markers: currentMarkers, suggested_city_marker: currentSuggestedCityMarker } = await populateMap(map));
-
+  ({
+    markers: currentMarkers,
+    suggested_city_marker: currentSuggestedCityMarker,
+  } = await populateMap(map));
 
   // Disable map interactions when dropdown is shown and enable them when hidden
   function disableMapInteractions() {
@@ -179,12 +180,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       if (currentMarkers) map.removeLayer(currentMarkers);
       console.log("removing current markers");
-      if (currentSuggestedCityMarker) map.removeLayer(currentSuggestedCityMarker);
+      if (currentSuggestedCityMarker)
+        map.removeLayer(currentSuggestedCityMarker);
       console.log("removed current suggested city marker");
 
-      const { markers: newMarkers, suggested_city_marker: newSuggestedCityMarker } = await populateMap(map, fileName);
+      const {
+        markers: newMarkers,
+        suggested_city_marker: newSuggestedCityMarker,
+      } = await populateMap(map, fileName);
       currentMarkers = newMarkers;
       currentSuggestedCityMarker = newSuggestedCityMarker;
-      });
     });
-})
+  });
+});
