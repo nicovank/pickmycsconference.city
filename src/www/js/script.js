@@ -90,7 +90,6 @@ async function populateMap(map, json = "data/FSE.json") {
   map.addLayer(markers);
 
   const suggested_city_marker = await addSuggestedCityMarker(map, data);
-  map.fitBounds(markers.getBounds().pad(0.5));
   return { markers, suggested_city_marker };
 }
 
