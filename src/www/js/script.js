@@ -1,11 +1,3 @@
-/* 
-Fetch data from json_name parameter and convert to GeoJSON format 
-
-Args: json_name (str): The name of the JSON file to fetch data from
-
-Returns: list: A list of GeoJSON features
-*/
-
 const redIcon = new L.Icon({
   iconUrl:
     "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
@@ -17,6 +9,9 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
+/* 
+Fetches suggested location from json and adds a red marker to the map
+*/
 async function addSuggestedCityMarker(map, data) {
   const location = data.suggested_location;
 
@@ -28,7 +23,16 @@ async function addSuggestedCityMarker(map, data) {
     marker.bindPopup(location.city);
   }
   marker.addTo(map);
+  return marker;
 }
+
+/* 
+Fetch data from json_name parameter and convert to GeoJSON format 
+
+Args: json_name (str): The name of the JSON file to fetch data from
+
+Returns: list: A list of GeoJSON features
+*/
 
 async function doFetch(json_name) {
   const features = [];
@@ -74,6 +78,24 @@ async function createGeojson(json_name) {
   return { geojson, data };
 }
 
+async function populateMap(map, json = "data/FSE.json") {
+  const markers = L.markerClusterGroup();
+  const { geojson, data } = await createGeojson(json);
+  L.geoJSON(geojson, {
+    pointToLayer: function (feature, latlng) {
+      const marker = L.marker(latlng);
+      if (feature.properties && feature.properties.name) {
+        marker.bindPopup(feature.properties.name);
+      }
+      return marker;
+    },
+  }).eachLayer((layer) => markers.addLayer(layer));
+  map.addLayer(markers);
+
+  const suggested_city_marker = await addSuggestedCityMarker(map, data);
+  return { markers, suggested_city_marker };
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   // Initialize map with a default view and set minimum zoom.
 
@@ -94,21 +116,81 @@ document.addEventListener("DOMContentLoaded", async function () {
     },
   ).addTo(map);
 
-  // Fetch and create GeoJSON data.
-  const { geojson, data } = await createGeojson("data/FSE.json");
-  const markers = L.markerClusterGroup(); // Create a marker cluster group
+  let currentMarkers, currentSuggestedCityMarker;
 
-  L.geoJSON(geojson, {
-    pointToLayer: function (feature, latlng) {
-      const marker = L.marker(latlng);
-      if (feature.properties && feature.properties.name) {
-        marker.bindPopup(feature.properties.name);
+  ({
+    markers: currentMarkers,
+    suggested_city_marker: currentSuggestedCityMarker,
+  } = await populateMap(map));
+
+  // Disable map interactions when dropdown is shown and enable them when hidden
+  function disableMapInteractions() {
+    map.dragging.disable();
+    map.scrollWheelZoom.disable();
+    map.doubleClickZoom.disable();
+    map.touchZoom.disable();
+    map.boxZoom.disable();
+    map.keyboard.disable();
+  }
+
+  // Enable map interactions
+  function enableMapInteractions() {
+    map.dragging.enable();
+    map.scrollWheelZoom.enable();
+    map.doubleClickZoom.enable();
+    map.touchZoom.enable();
+    map.boxZoom.enable();
+    map.keyboard.enable();
+  }
+
+  document.addEventListener(
+    "show.bs.dropdown",
+    function (e) {
+      if (e.target.closest("#map .dropdown")) {
+        disableMapInteractions();
       }
-      return marker;
     },
-  }).eachLayer((layer) => markers.addLayer(layer));
+    true,
+  );
 
-  map.addLayer(markers);
+  document.addEventListener(
+    "hide.bs.dropdown",
+    function (e) {
+      if (e.target.closest("#map .dropdown")) {
+        enableMapInteractions();
+      }
+    },
+    true,
+  );
 
-  addSuggestedCityMarker(map, data);
+  document.addEventListener(
+    "hidden.bs.dropdown",
+    function (e) {
+      if (e.target.closest("#map .dropdown")) {
+        enableMapInteractions();
+      }
+    },
+    true,
+  );
+
+  // Change map data based on dropdown selection
+  const items = document.querySelectorAll("#map .dropdown-item");
+  items.forEach((item) => {
+    item.addEventListener("click", async function (e) {
+      e.preventDefault(); // prevent page jump if it's an <a href="#">
+      const fileName = this.dataset.file;
+      console.log(fileName);
+
+      if (currentMarkers) map.removeLayer(currentMarkers);
+      console.log("removing current markers");
+      if (currentSuggestedCityMarker)
+        map.removeLayer(currentSuggestedCityMarker);
+      console.log("removed current suggested city marker");
+
+      ({
+        markers: currentMarkers,
+        suggested_city_marker: currentSuggestedCityMarker,
+      } = await populateMap(map, fileName));
+    });
+  });
 });

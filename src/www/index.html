@@ -136,7 +136,45 @@
           <section id="map-section" class="pt-5">
             <h2>Maps</h2>
             <p>This map shows the locations of various conference events.</p>
-            <div id="map" class="rounded shadow-sm border"></div>
+            <div
+              id="map"
+              class="rounded shadow-sm border position-relative"
+              style="height: 400px"
+            >
+              <div
+                class="dropdown position-absolute top-0 end-0 m-2"
+                style="z-index: 1000"
+              >
+                <button
+                  id="conferenceDropdown"
+                  class="btn btn-primary dropdown-toggle"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Pick a conference
+                </button>
+                <ul
+                  class="dropdown-menu w-100"
+                  aria-labelledby="conferenceDropdown"
+                  style="max-height: 150px; overflow-y: auto"
+                >
+                  <li>
+                    <a class="dropdown-item" data-file="data/FSE.json" href="#"
+                      >FSE</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      data-file="data/ASPLOS.json"
+                      href="#"
+                      >ASPLOS</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
           </section>
 
           <section id="findings" class="pt-5">
