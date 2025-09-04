@@ -11,7 +11,6 @@ const redIcon = new L.Icon({
 
 /* 
 Fetches suggested location from json and adds a red marker to the map
-
 */
 async function addSuggestedCityMarker(map, data) {
   const location = data.suggested_location;
