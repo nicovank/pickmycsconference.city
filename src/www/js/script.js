@@ -183,12 +183,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         map.removeLayer(currentSuggestedCityMarker);
       console.log("removed current suggested city marker");
 
-      const {
-        markers: newMarkers,
-        suggested_city_marker: newSuggestedCityMarker,
-      } = await populateMap(map, fileName);
-      currentMarkers = newMarkers;
-      currentSuggestedCityMarker = newSuggestedCityMarker;
+      ({
+        markers: currentMarkers,
+        suggested_city_marker: currentSuggestedCityMarker,
+      } = await populateMap(map, fileName));
     });
   });
 });
