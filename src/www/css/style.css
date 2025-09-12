@@ -34,3 +34,43 @@ html {
 .marker-cluster-large {
   background-color: rgba(58, 92, 207, 0.6);
 }
+.legend {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.legend h6 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.legend .legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.legend .legend-item:last-child {
+    margin-bottom: 0;
+}
+
+.legend .legend-icon {
+  width: 15px;
+  height: 25px;
+  margin-right: 8px;
+  object-fit: contain;
+}
+
+.legend .legend-swatch {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin-right: 8px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.legend span {
+  font-size: 14px;
+}

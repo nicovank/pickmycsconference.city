@@ -115,6 +115,62 @@ document.addEventListener("DOMContentLoaded", async function () {
         '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
     },
   ).addTo(map);
+  const legend = L.control({ position: "bottomright" });
+
+  legend.onAdd = function (map) {
+    const div = L.DomUtil.create("div", "info legend card p-2");
+    const grades = [
+      {
+        label: "Suggested City",
+        type: "icon",
+        iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
+      },
+      {
+        label: "Author Affiliation",
+        type: "icon",
+        iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+      },
+      {
+        label: "Large Cluster",
+        type: "swatch",
+        color: "#3a5ccf", 
+      },
+      {
+        label: "Medium Cluster",
+        type: "swatch",
+        color: "#73aeed", 
+      },
+      {
+        label: "Small Cluster",
+        type: "swatch",
+        color: "#a6dbf7", 
+      },
+    ];
+
+    let innerHTML = "<h6>Legend</h6>";
+    
+    // Loop through our legend items and generate a label with a colored swatch or icon for each
+    for (let i = 0; i < grades.length; i++) {
+        let item = grades[i];
+        let symbol;
+
+        if (item.type === "icon") {
+            symbol = `<img src="${item.iconUrl}" class="legend-icon" alt="${item.label}">`;
+        } else if (item.type === "swatch") {
+            symbol = `<i class="legend-swatch" style="background:${item.color}"></i>`;
+        }
+
+        innerHTML += `<div class="legend-item">${symbol} <span>${item.label}</span></div>`;
+    }
+    div.innerHTML = innerHTML;
+
+    // Prevents map events (like zoom) from firing when clicking on the legend
+    L.DomEvent.disableClickPropagation(div);
+
+    return div;
+  };
+
+  legend.addTo(map);
 
   let currentMarkers, currentSuggestedCityMarker;
 
