@@ -129,7 +129,30 @@
           <section id="about" class="pt-4">
             <h2>About</h2>
             <p>
-              This section provides an overview of the project and its goals.
+              Conferences are important for sharing research and helping global
+              collaboration, but doing so presents a complex logistical
+              challenge: choosing a location. The venue directly impacts
+              attendee travel costs, time, and accessibility, making the
+              decision crucial for ensuring maximum participation.
+            </p>
+            <p>
+              PickMyConference offers a data-driven approach to this problem.
+              Our mapping tool analyzes takes into account conference
+              participation to suggest a geographically optimal location that
+              aims to minimize overall travel burden for attendees. By gathering
+              coordinates of author affiliations from their associated
+              publications, we calculate the
+              <strong>geometric median</strong>&ndash;the point that minimizes
+              total travel distance for all participants. The tool then
+              identifies the nearest major city to this point, providing a
+              practical venue suggestion.
+            </p>
+            <p>
+              Our goal is to provide conference organizers with a tool that
+              helps make a more strategic and inclusive location decision. By
+              visualizing a geographic center of a research community, we can
+              help reduce the collective travel burden as well as increase venue
+              attendance. Explore our map below to see the tool in action.
             </p>
           </section>
 
@@ -175,7 +198,41 @@
 
           <section id="findings" class="pt-5">
             <h2>Findings</h2>
-            <p>Here we will summarize the findings from the conference.</p>
+            <p>
+              To demonstrate the effectiveness of our tool, we looked at data
+              from the
+              <strong
+                >Architectural Support for Programming Languages and Operating
+                Systems (ASPLOS)</strong
+              >
+              conference. Please click the "ASPLOS" option in the map dropdown
+              to view the relevant data.
+            </p>
+
+            <h5>Key Results:</h5>
+            <ul>
+              <li>
+                The actual conference was held in
+                <strong>Rotterdam, Netherlands</strong>.
+              </li>
+              <li>
+                Our analysis of the author affiliations identified
+                <strong>New York City, USA</strong> as the most central venue.
+              </li>
+              <li>
+                The map shows an especially heavy concentration of contributing
+                authors in North America/Western half of the world. This
+                explains the algorithm's choice of New York City, as it
+                mathematically minimizes the travel distance for the largest
+                number of participants.
+              </li>
+            </ul>
+            <p>
+              These findings demonstrate that a data-driven approach can
+              identify more centrally located venues, potentially increasing
+              participation as well as helping reduce the environmental impact
+              of travel in academia.
+            </p>
           </section>
 
           <section id="poster" class="pt-5">
@@ -186,7 +243,7 @@
             </p>
 
             <div class="container row">
-              <a href="poster.pdf"
+              <a href="poster.pdf" target="_blank" rel="noopener noreferrer"
                 ><img src="poster.jpg" alt="Poster" class="col-xl-6 mw-100"
               /></a>
             </div>
@@ -196,9 +253,16 @@
             <h2>Contact</h2>
             <p>
               Find the repository
-              <a href="https://github.com/nicovank/pickmycsconference.city"
+              <a
+                href="https://github.com/nicovank/pickmycsconference.city"
+                target="_blank"
+                rel="noopener noreferrer"
                 >on GitHub</a
               >!
+            </p>
+            <p>
+              To suggest a conference to add to our map, please reach out at
+              <a href="mailto:rjoshi@umass.edu">rjoshi@umass.edu</a>
             </p>
           </section>
         </main>
