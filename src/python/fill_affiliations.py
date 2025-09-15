@@ -112,11 +112,17 @@ def main(args: argparse.Namespace) -> None:
                 """
                     INSERT INTO paper_affiliations (paper_doi, author_name, affiliation_name)
                     VALUES (%s, %s, %s)
+                    ON CONFLICT DO NOTHING
                 """,
                 (doi, author, affiliation),
             )
-            assert cursor.rowcount == 1
-            print(f"Inserted entry for {doi}/{author}: {affiliation}")
+            if cursor.rowcount == 1:
+                print(f"Inserted entry for {doi}/{author}: {affiliation}")
+            else:
+                print(f"[ERROR] Looks like {doi}/{author} was already an entry...")
+                errors.append(
+                    f"{doi} / {author} / {affiliation} (Already in database?)"
+                )
 
         # Commit.
         connection.commit()
