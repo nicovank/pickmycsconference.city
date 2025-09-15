@@ -75,6 +75,7 @@ html {
   font-size: 14px;
 }
 
-p, ul {
+p,
+ul {
   max-width: 800px;
 }
