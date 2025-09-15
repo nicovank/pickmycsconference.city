@@ -39,4 +39,4 @@ jobs:
           python3 src/python/db_to_json.py
 
       - name: Deploy
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ${{ github.workspace }}/src/www/ root@${{ secrets.DROPLET_IP }}:/var/www/html
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" --delete ${{ github.workspace }}/src/www/ root@${{ secrets.DROPLET_IP }}:/var/www/html/pickmycsconference.city
